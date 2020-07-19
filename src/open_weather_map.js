@@ -7,8 +7,12 @@ function zipUrl(zip) {
   return `${API_STEM}q=${zip}&units=imperial&APPID=${WEATHER_API_KEY}`;
 }
 
-function fetchForecast(zip) {
-  return fetch(zipUrl(zip))
+function latLonUrl(lat, lon) {
+  return `${API_STEM}lat=${lat}&lon=${lon}&units=imperial&APPID=${WEATHER_API_KEY}`;
+}
+
+function fetchForecast(url) {
+  return fetch(url)
     .then((response) => response.json())
     .then((responseJSON) => ({
       main: responseJSON.weather[0].main,
@@ -20,4 +24,15 @@ function fetchForecast(zip) {
     });
 }
 
-export default { fetchForecast };
+function fetchZipForecast(zip) {
+  return fetchForecast(zipUrl(zip));
+}
+
+function fetchLatLonForecast(lat, lon) {
+  return fetchForecast(latLonUrl(lat, lon));
+}
+
+export default {
+  fetchZipForecast,
+  fetchLatLonForecast,
+};

@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 const styles = StyleSheet.create({
-  container: { height: 130 },
+  container: { height: 144 },
   bigText: {
     flex: 2,
     fontSize: 20,

@@ -9,6 +9,7 @@ import {
 import Forecast from './forecast';
 import OpenWeatherMap from './open_weather_map';
 import flowers from './flowers.png';
+import LocationButton from './LocationButton';
 
 const baseFontSize = 16;
 
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'nowrap',
     alignItems: 'flex-start',
-    padding: 30,
+    padding: 24,
   },
   zipContainer: {
     height: baseFontSize + 10,
@@ -57,10 +58,20 @@ class WeatherProject extends Component {
 
   _handleTextChange = (event) => {
     const zip = event.nativeEvent.text;
-    OpenWeatherMap.fetchForecast(zip).then((forecast) => {
-      console.log(forecast);
-      this.setState({ forecast });
-    });
+    OpenWeatherMap.fetchZipForecast(zip).then(
+      (forecast) => {
+        console.log(forecast);
+        this.setState({ forecast });
+      },
+    );
+  };
+
+  _getForecastForCoords = (lat, lon) => {
+    OpenWeatherMap.fetchLatLonForecast(lat, lon).then(
+      (forecast) => {
+        this.setState({ forecast });
+      },
+    );
   };
 
   render() {
@@ -95,6 +106,13 @@ class WeatherProject extends Component {
                 />
               </View>
             </View>
+
+            <View style={styles.row}>
+              <LocationButton
+                onGetCoords={this._getForecastForCoords}
+              />
+            </View>
+
             {content}
           </View>
         </ImageBackground>
