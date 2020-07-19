@@ -1,23 +1,24 @@
 import React, { Component } from 'react';
 import {
-  ImageBackground,
   StyleSheet,
   Text,
   TextInput,
   View,
+  AsyncStorage,
 } from 'react-native';
-import Forecast from './forecast';
+import Forecast from './Forecast/forecast';
 import OpenWeatherMap from './open_weather_map';
-import flowers from './flowers.png';
 import LocationButton from './LocationButton';
+import PhotoBackdrop from './PhotoBackdrop';
+import textStyles from './styles/typography';
 
+const STORAGE_KEY = '@SmarterWeather:zip';
 const baseFontSize = 16;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  backdrop: { flex: 1, flexDirection: 'column' },
   overlay: {
     paddingTop: 5,
     backgroundColor: '#000000',
@@ -41,10 +42,9 @@ const styles = StyleSheet.create({
   zipCode: {
     flex: 1,
     flexBasis: 1,
-    width: 50,
+    width: 77,
     height: baseFontSize,
   },
-  mainText: { fontSize: baseFontSize, color: '#FFFFFF' },
 });
 
 class WeatherProject extends Component {
@@ -56,14 +56,37 @@ class WeatherProject extends Component {
     };
   }
 
-  _handleTextChange = (event) => {
-    const zip = event.nativeEvent.text;
+  componentDidMount = () => {
+    AsyncStorage.getItem(STORAGE_KEY)
+      .then((value) => {
+        if (value !== null) {
+          this._getForecastForZip(value);
+        }
+      })
+      .catch((error) => console.error(
+        `AsyncStorage error: ${error.message}`,
+      ))
+      .done();
+  };
+
+  _getForecastForZip = (zip) => {
+    AsyncStorage.setItem(STORAGE_KEY, zip)
+      .then(() => console.log(`Saved selection to disk: ${zip}`))
+      .catch((error) => console.error(
+        `AsyncStorage error: ${error.message}`,
+      ))
+      .done();
+
     OpenWeatherMap.fetchZipForecast(zip).then(
       (forecast) => {
-        console.log(forecast);
         this.setState({ forecast });
       },
     );
+  };
+
+  _handleTextChange = (event) => {
+    const zip = event.nativeEvent.text;
+    this._getForecastForZip(zip);
   };
 
   _getForecastForCoords = (lat, lon) => {
@@ -88,19 +111,15 @@ class WeatherProject extends Component {
 
     return (
       <View style={styles.container}>
-        <ImageBackground
-          source={flowers}
-          resizeMode="cover"
-          style={styles.backdrop}
-        >
+        <PhotoBackdrop>
           <View style={styles.overlay}>
             <View style={styles.row}>
-              <Text style={styles.mainText}>
+              <Text style={textStyles.mainText}>
                 Current weather for
               </Text>
               <View style={styles.zipContainer}>
                 <TextInput
-                  style={[styles.zipCode, styles.mainText]}
+                  style={[styles.zipCode, textStyles.mainText]}
                   onSubmitEditing={this._handleTextChange}
                   underlineColorAndroid="transparent"
                 />
@@ -115,7 +134,7 @@ class WeatherProject extends Component {
 
             {content}
           </View>
-        </ImageBackground>
+        </PhotoBackdrop>
       </View>
     );
   }
