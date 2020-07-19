@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -31,3 +32,9 @@ function Forecast(props) {
 }
 
 export default Forecast;
+
+Forecast.propTypes = {
+  description: PropTypes.string.isRequired,
+  main: PropTypes.string.isRequired,
+  temp: PropTypes.number.isRequired,
+};

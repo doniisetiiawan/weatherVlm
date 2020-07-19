@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+
 const WEATHER_API_KEY = 'bbeb34ebf60ad50f7893e7440a1e2b0b';
 const API_STEM = 'http://api.openweathermap.org/data/2.5/weather?';
 
@@ -6,7 +8,6 @@ function zipUrl(zip) {
 }
 
 function fetchForecast(zip) {
-  // eslint-disable-next-line no-undef
   return fetch(zipUrl(zip))
     .then((response) => response.json())
     .then((responseJSON) => ({
